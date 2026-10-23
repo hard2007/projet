@@ -2,7 +2,7 @@ import sqlite3
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-DB = "notes.db"
+DB = r"yassinoldcode\notes.db"
 
 # ---------- Base de données ----------
 def requete(sql, params=(), ecrire=False):
