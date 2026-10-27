@@ -20,7 +20,49 @@ class MiniMassarApp:
             self.style.theme_use("clam")
         except tk.TclError:
             pass
+        self.configure_styles()
+        self.root.configure(background="#eef2f7")
         self.show_login()
+
+    def configure_styles(self):
+        self.style.configure("TFrame", background="#eef2f7")
+        self.style.configure("TLabel", background="#eef2f7", foreground="#243247",
+                             font=("Segoe UI", 10))
+        self.style.configure("Card.TFrame", background="#ffffff")
+        self.style.configure("Card.TLabel", background="#ffffff", foreground="#243247",
+                             font=("Segoe UI", 10))
+        self.style.configure("Title.TLabel", background="#ffffff", foreground="#172b4d",
+                             font=("Segoe UI", 26, "bold"))
+        self.style.configure("Subtitle.TLabel", background="#ffffff", foreground="#718096",
+                             font=("Segoe UI", 10))
+        self.style.configure("Muted.TLabel", background="#ffffff", foreground="#718096",
+                             font=("Segoe UI", 9))
+        self.style.configure("Header.TFrame", background="#172b4d")
+        self.style.configure("HeaderTitle.TLabel", background="#172b4d", foreground="#ffffff",
+                             font=("Segoe UI", 18, "bold"))
+        self.style.configure("HeaderMeta.TLabel", background="#172b4d", foreground="#cbd5e1",
+                             font=("Segoe UI", 10))
+        self.style.configure("TButton", background="#e2e8f0", foreground="#243247",
+                             font=("Segoe UI", 10, "bold"), padding=(14, 9), borderwidth=0)
+        self.style.map("TButton", background=[("active", "#cbd5e1")])
+        self.style.configure("Accent.TButton", background="#087f8c", foreground="#ffffff",
+                             font=("Segoe UI", 10, "bold"), padding=(16, 10), borderwidth=0)
+        self.style.map("Accent.TButton", background=[("active", "#066875")])
+        self.style.configure("TEntry", fieldbackground="#ffffff", foreground="#243247",
+                             padding=8, borderwidth=1)
+        self.style.configure("TCombobox", fieldbackground="#ffffff", foreground="#243247",
+                             padding=6)
+        self.style.configure("TNotebook", background="#eef2f7", borderwidth=0)
+        self.style.configure("TNotebook.Tab", background="#e2e8f0", foreground="#526174",
+                             padding=(18, 10), font=("Segoe UI", 10, "bold"))
+        self.style.map("TNotebook.Tab", background=[("selected", "#ffffff")],
+                       foreground=[("selected", "#087f8c")])
+        self.style.configure("Treeview", background="#ffffff", fieldbackground="#ffffff",
+                             foreground="#243247", rowheight=32, font=("Segoe UI", 10),
+                             borderwidth=0)
+        self.style.configure("Treeview.Heading", background="#e8eef5", foreground="#526174",
+                             font=("Segoe UI", 9, "bold"), padding=(8, 9), relief="flat")
+        self.style.map("Treeview.Heading", background=[("active", "#dbe5ef")])
 
     def clear(self):
         for widget in self.root.winfo_children():
@@ -29,16 +71,19 @@ class MiniMassarApp:
     def show_login(self):
         self.user = None
         self.clear()
-        outer = ttk.Frame(self.root, padding=30)
+        outer = ttk.Frame(self.root, style="Card.TFrame", padding=36)
         outer.pack(expand=True)
-        ttk.Label(outer, text="Mini-Massar", font=("Segoe UI", 26, "bold")).pack(pady=(0, 6))
-        ttk.Label(outer, text="University student and grade management").pack(pady=(0, 24))
-        form = ttk.Frame(outer)
+        ttk.Label(outer, text="Mini-Massar", style="Title.TLabel").pack(pady=(0, 6))
+        ttk.Label(outer, text="University student and grade management",
+                  style="Subtitle.TLabel").pack(pady=(0, 24))
+        form = ttk.Frame(outer, style="Card.TFrame")
         form.pack()
-        ttk.Label(form, text="Username").grid(row=0, column=0, sticky="w", padx=8, pady=8)
+        ttk.Label(form, text="Username", style="Card.TLabel").grid(
+            row=0, column=0, sticky="w", padx=8, pady=8)
         username = ttk.Entry(form, width=32)
         username.grid(row=0, column=1, padx=8, pady=8)
-        ttk.Label(form, text="Password").grid(row=1, column=0, sticky="w", padx=8, pady=8)
+        ttk.Label(form, text="Password", style="Card.TLabel").grid(
+            row=1, column=0, sticky="w", padx=8, pady=8)
         password = ttk.Entry(form, width=32, show="*")
         password.grid(row=1, column=1, padx=8, pady=8)
 
@@ -57,19 +102,20 @@ class MiniMassarApp:
             else:
                 self.show_teacher_dashboard()
 
-        ttk.Button(outer, text="Log in", command=do_login).pack(pady=14, fill="x")
+        ttk.Button(outer, text="Log in", style="Accent.TButton",
+                   command=do_login).pack(pady=14, fill="x")
         password.bind("<Return>", do_login)
         username.focus_set()
         ttk.Label(outer, text="Demo accounts must be created before the first login.",
-                  foreground="#666").pack(pady=(10, 0))
+                  style="Muted.TLabel").pack(pady=(10, 0))
 
     def dashboard_header(self, title):
-        header = ttk.Frame(self.root, padding=(18, 14))
+        header = ttk.Frame(self.root, style="Header.TFrame", padding=(22, 16))
         header.pack(fill="x")
-        ttk.Label(header, text=title, font=("Segoe UI", 18, "bold")).pack(side="left")
-        ttk.Label(header, text=f"{self.user['full_name']} · {self.user['role'].title()}").pack(side="left", padx=20)
+        ttk.Label(header, text=title, style="HeaderTitle.TLabel").pack(side="left")
+        ttk.Label(header, text=f"{self.user['full_name']} · {self.user['role'].title()}",
+                  style="HeaderMeta.TLabel").pack(side="left", padx=20)
         ttk.Button(header, text="Log out", command=self.show_login).pack(side="right")
-        ttk.Separator(self.root).pack(fill="x")
 
     def show_student_dashboard(self):
         self.clear()
@@ -77,8 +123,10 @@ class MiniMassarApp:
         body = ttk.Frame(self.root, padding=18)
         body.pack(fill="both", expand=True)
         group = self.user.get("group_name") or "Not assigned"
-        ttk.Label(body, text=f"Group: {group}", font=("Segoe UI", 12, "bold")).pack(anchor="w", pady=(0, 10))
-        ttk.Label(body, text="Your grades and module results").pack(anchor="w")
+        ttk.Label(body, text=f"Group: {group}",
+                  font=("Segoe UI", 12, "bold")).pack(anchor="w", pady=(0, 10))
+        ttk.Label(body, text="Your grades and module results",
+                  foreground="#718096").pack(anchor="w")
         columns = ("module", "teacher", "coefficient", "coursework", "exam", "average")
         tree = ttk.Treeview(body, columns=columns, show="headings", height=15)
         headings = {
@@ -101,7 +149,8 @@ class MiniMassarApp:
             avg = result["semester_average"]
             average_text = "Not available yet" if avg is None else f"{avg:.2f} / 20"
             ttk.Label(body, text=f"Weighted semester average: {average_text}",
-                      font=("Segoe UI", 12, "bold")).pack(anchor="e", pady=6)
+                      font=("Segoe UI", 12, "bold"),
+                      foreground="#087f8c").pack(anchor="e", pady=6)
         except Exception as exc:
             messagebox.showerror("Results error", str(exc))
 
@@ -158,9 +207,10 @@ class MiniMassarApp:
             except Exception as exc:
                 messagebox.showerror("Could not save grade", str(exc))
 
-        ttk.Button(parent, text="Save grade", command=save_grade).grid(row=4, column=1, sticky="w", padx=5, pady=12)
+        ttk.Button(parent, text="Save grade", style="Accent.TButton",
+                   command=save_grade).grid(row=4, column=1, sticky="w", padx=5, pady=12)
         ttk.Label(parent, text="Both marks must be between 0 and 20. Leave one blank if not yet graded.",
-                  foreground="#666").grid(row=6, column=0, columnspan=2, sticky="w", pady=8)
+                  foreground="#718096").grid(row=6, column=0, columnspan=2, sticky="w", pady=8)
 
     def build_modules_tab(self, parent):
         ttk.Label(parent, text="Your assigned modules").pack(anchor="w", pady=(0, 8))
@@ -206,7 +256,8 @@ class MiniMassarApp:
             except Exception as exc:
                 messagebox.showerror("Update failed", str(exc))
 
-        ttk.Button(controls, text="Assign group", command=assign_group).pack(side="left")
+        ttk.Button(controls, text="Assign group", style="Accent.TButton",
+                   command=assign_group).pack(side="left")
 
     def build_modules_admin_tab(self, parent):
         # Kept as a helper for future extension; modules are initially assigned by setup script.
