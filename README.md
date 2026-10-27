@@ -1,6 +1,6 @@
-# Mini-Massar — Python, Tkinter and SQLite
+# SmartGrades — Python, Tkinter and SQLite
 
-Mini-Massar is a desktop prototype for managing university student accounts, modules,
+SmartGrades is a desktop prototype for managing university student accounts, modules,
 groups, and grades. It uses **exactly three application tables**: `users`, `modules`,
 and `grades`.
 
@@ -32,24 +32,22 @@ python main.py
 
 This initializes `database/students.db` if necessary, then opens the login screen.
 
-## Create demonstration accounts
+## Create demonstration data
 
-In a new installation, run this once:
+Run this from the project folder to create or refresh the local demonstration data:
 
 ```bash
 python create_demo_users.py
 ```
 
-Demo login credentials:
+The seed includes 60 fictional students in groups G1-G4, five teachers, six modules,
+and sample coursework and exam marks for each student. All teacher accounts use
+`TeacherDemo123!`; all student accounts use `StudentDemo123!`. The complete account
+list is in [DEMO_CREDENTIALS.txt](./DEMO_CREDENTIALS.txt). Running the seed again
+resets passwords for these demo usernames and fills in any missing sample data.
 
-| Role | Username | Password |
-|---|---|---|
-| Teacher | `teacher1` | `TeacherDemo123!` |
-| Student | `student1` | `StudentDemo123!` |
-| Student | `student2` | `StudentDemo123!` |
-
-These are public demo credentials, only for a local classroom demonstration. Change them
-before entering any real information. Do not commit real student data or real passwords
+These are public demo credentials for local testing only. Do not use this file or these
+accounts for real student information, and do not commit real student data or passwords
 to GitHub.
 
 ## Database structure
@@ -74,7 +72,7 @@ You can change the weights in `services/grade_service.py` to match your professo
 ## Project structure
 
 ```text
-Mini-Massar/
+SmartGrades/
 ├── main.py
 ├── database.py
 ├── create_demo_users.py
@@ -103,7 +101,7 @@ Mini-Massar/
 ```bash
 git init
 git add .
-git commit -m "Initial Mini-Massar application"
+git commit -m "Initial SmartGrades application"
 git branch -M main
 git remote add origin <YOUR_GITHUB_REPOSITORY_URL>
 git push -u origin main

@@ -8,11 +8,11 @@ from services.grade_service import (
 )
 
 
-class MiniMassarApp:
+class SmartGradesApp:
     def __init__(self, root):
         self.root = root
         self.user = None
-        self.root.title("Mini-Massar")
+        self.root.title("SmartGrades")
         self.root.geometry("1000x650")
         self.root.minsize(820, 540)
         self.style = ttk.Style()
@@ -73,7 +73,7 @@ class MiniMassarApp:
         self.clear()
         outer = ttk.Frame(self.root, style="Card.TFrame", padding=36)
         outer.pack(expand=True)
-        ttk.Label(outer, text="Mini-Massar", style="Title.TLabel").pack(pady=(0, 6))
+        ttk.Label(outer, text="SmartGrades", style="Title.TLabel").pack(pady=(0, 6))
         ttk.Label(outer, text="University student and grade management",
                   style="Subtitle.TLabel").pack(pady=(0, 24))
         form = ttk.Frame(outer, style="Card.TFrame")
@@ -266,5 +266,5 @@ class MiniMassarApp:
 
 def create_main_window():
     root = tk.Tk()
-    MiniMassarApp(root)
+    SmartGradesApp(root)
     return root

@@ -1,4 +1,4 @@
--- Mini-Massar: exactly three application tables.
+-- SmartGrades: exactly three application tables.
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS users (
