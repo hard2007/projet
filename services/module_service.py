@@ -44,7 +44,8 @@ def list_students():
     with get_connection() as conn:
         rows = conn.execute(
             """SELECT user_id, username, full_name, email, group_name
-               FROM users WHERE role='student' ORDER BY full_name"""
+               FROM users WHERE role='student' 
+               ORDER BY group_name, full_name"""
         ).fetchall()
     return [dict(row) for row in rows]
 

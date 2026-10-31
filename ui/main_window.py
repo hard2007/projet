@@ -209,17 +209,22 @@ class SmartGradesApp:
         parent.rowconfigure(7, weight=1)
         parent.columnconfigure(1, weight=1)
 
-        columns = ("name", "group", "coursework", "exam")
+        # Added "module" to the columns list
+        columns = ("name", "group", "module", "coursework", "exam")
         tree = ttk.Treeview(tree_frame, columns=columns, show="headings", height=8)
+        
         tree.heading("name", text="Student Name")
         tree.heading("group", text="Group")
+        tree.heading("module", text="Module")
         tree.heading("coursework", text="Coursework")
         tree.heading("exam", text="Exam")
         
-        tree.column("name", width=220)
-        tree.column("group", width=120)
-        tree.column("coursework", width=100, anchor="center")
-        tree.column("exam", width=100, anchor="center")
+        # Adjusted widths to fit the new column
+        tree.column("name", width=180)
+        tree.column("group", width=100)
+        tree.column("module", width=120)
+        tree.column("coursework", width=90, anchor="center")
+        tree.column("exam", width=90, anchor="center")
         tree.pack(fill="both", expand=True)
 
         def refresh_table(*args):
@@ -229,19 +234,29 @@ class SmartGradesApp:
             module_label = module_var.get()
             if not module_label:
                 return
+            
+            # Extract the ID and the raw module name from the dictionary
             module_id = module_by_label[module_label]["module_id"]
+            module_name = module_by_label[module_label]["module_name"] 
             
             try:
-                # Fetches the data using the updated SQL query
                 students_data = get_students_for_module(module_id, self.user["user_id"])
                 for s in students_data:
                     cw = s.get("coursework_mark")
                     ex = s.get("exam_mark")
                     cw_str = f"{cw:.2f}" if cw is not None else "—"
                     ex_str = f"{ex:.2f}" if ex is not None else "—"
-                    tree.insert("", "end", values=(s["full_name"], s["group_name"] or "None", cw_str, ex_str))
+                    
+                    # Insert the module_name into the table row
+                    tree.insert("", "end", values=(
+                        s["full_name"], 
+                        s["group_name"] or "None", 
+                        module_name, 
+                        cw_str, 
+                        ex_str
+                    ))
             except Exception:
-                pass 
+                pass
 
         # Refresh table when a different module is selected
         module_var.trace_add("write", refresh_table)

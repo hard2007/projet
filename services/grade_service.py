@@ -75,7 +75,7 @@ def get_students_for_module(module_id, teacher_id):
                FROM users u
                LEFT JOIN grades g ON g.student_id = u.user_id AND g.module_id = ?
                WHERE u.role='student' 
-               ORDER BY u.full_name""",
+               ORDER BY u.group_name, u.full_name""",
             (module_id,)
         ).fetchall()
     return [dict(row) for row in rows]
