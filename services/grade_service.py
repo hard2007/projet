@@ -68,9 +68,15 @@ def get_students_for_module(module_id, teacher_id):
         ).fetchone()
         if module is None:
             raise PermissionError("This module is not assigned to you.")
+        
         rows = conn.execute(
-            """SELECT user_id, full_name, username, group_name
-               FROM users WHERE role='student' ORDER BY full_name"""
+            """SELECT u.user_id, u.full_name, u.username, u.group_name,
+                      g.coursework_mark, g.exam_mark
+               FROM users u
+               LEFT JOIN grades g ON g.student_id = u.user_id AND g.module_id = ?
+               WHERE u.role='student' 
+               ORDER BY u.full_name""",
+            (module_id,)
         ).fetchall()
     return [dict(row) for row in rows]
 

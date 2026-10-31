@@ -106,8 +106,6 @@ class SmartGradesApp:
                    command=do_login).pack(pady=14, fill="x")
         password.bind("<Return>", do_login)
         username.focus_set()
-        ttk.Label(outer, text="Demo accounts must be created before the first login.",
-                  style="Muted.TLabel").pack(pady=(10, 0))
 
     def dashboard_header(self, title):
         header = ttk.Frame(self.root, style="Header.TFrame", padding=(22, 16))
@@ -178,25 +176,94 @@ class SmartGradesApp:
         if not modules:
             ttk.Label(parent, text="No modules are assigned to this teacher yet.").pack(anchor="w")
             return
+            
         module_by_label = {f"{m['module_name']} (coefficient {m['coefficient']})": m for m in modules}
         module_var = tk.StringVar(value=next(iter(module_by_label)))
+        
         ttk.Label(parent, text="Module").grid(row=0, column=0, sticky="w", padx=5, pady=5)
         module_combo = ttk.Combobox(parent, textvariable=module_var, values=list(module_by_label), state="readonly", width=42)
         module_combo.grid(row=0, column=1, sticky="w", padx=5, pady=5)
+        
         students = list_students()
         student_by_label = {f"{s['full_name']} ({s['username']}) — {s['group_name'] or 'No group'}": s for s in students}
         student_var = tk.StringVar(value=next(iter(student_by_label), ""))
+        
         ttk.Label(parent, text="Student").grid(row=1, column=0, sticky="w", padx=5, pady=5)
         student_combo = ttk.Combobox(parent, textvariable=student_var, values=list(student_by_label), state="readonly", width=55)
         student_combo.grid(row=1, column=1, sticky="w", padx=5, pady=5)
+        
         ttk.Label(parent, text="Coursework mark /20").grid(row=2, column=0, sticky="w", padx=5, pady=5)
         coursework = ttk.Entry(parent, width=20)
         coursework.grid(row=2, column=1, sticky="w", padx=5, pady=5)
+        
         ttk.Label(parent, text="Exam mark /20").grid(row=3, column=0, sticky="w", padx=5, pady=5)
         exam = ttk.Entry(parent, width=20)
         exam.grid(row=3, column=1, sticky="w", padx=5, pady=5)
+        
         status = ttk.Label(parent, text="")
         status.grid(row=5, column=0, columnspan=2, sticky="w", pady=8)
+
+        # --- Table to display saved grades ---
+        tree_frame = ttk.Frame(parent)
+        tree_frame.grid(row=7, column=0, columnspan=2, sticky="nsew", pady=10)
+        parent.rowconfigure(7, weight=1)
+        parent.columnconfigure(1, weight=1)
+
+        columns = ("name", "group", "coursework", "exam")
+        tree = ttk.Treeview(tree_frame, columns=columns, show="headings", height=8)
+        tree.heading("name", text="Student Name")
+        tree.heading("group", text="Group")
+        tree.heading("coursework", text="Coursework")
+        tree.heading("exam", text="Exam")
+        
+        tree.column("name", width=220)
+        tree.column("group", width=120)
+        tree.column("coursework", width=100, anchor="center")
+        tree.column("exam", width=100, anchor="center")
+        tree.pack(fill="both", expand=True)
+
+        def refresh_table(*args):
+            for item in tree.get_children():
+                tree.delete(item)
+            
+            module_label = module_var.get()
+            if not module_label:
+                return
+            module_id = module_by_label[module_label]["module_id"]
+            
+            try:
+                # Fetches the data using the updated SQL query
+                students_data = get_students_for_module(module_id, self.user["user_id"])
+                for s in students_data:
+                    cw = s.get("coursework_mark")
+                    ex = s.get("exam_mark")
+                    cw_str = f"{cw:.2f}" if cw is not None else "—"
+                    ex_str = f"{ex:.2f}" if ex is not None else "—"
+                    tree.insert("", "end", values=(s["full_name"], s["group_name"] or "None", cw_str, ex_str))
+            except Exception:
+                pass 
+
+        # Refresh table when a different module is selected
+        module_var.trace_add("write", refresh_table)
+        # -------------------------------------
+
+        def save_grade():
+            try:
+                module = module_by_label[module_var.get()]
+                student = student_by_label[student_var.get()]
+                upsert_grade(student["user_id"], module["module_id"], coursework.get(), exam.get(), self.user["user_id"])
+                status.config(text="Grade saved successfully.")
+                refresh_table() # Refreshes the UI table immediately after saving
+            except Exception as exc:
+                messagebox.showerror("Could not save grade", str(exc))
+
+        ttk.Button(parent, text="Save grade", style="Accent.TButton",
+                   command=save_grade).grid(row=4, column=1, sticky="w", padx=5, pady=12)
+                   
+        ttk.Label(parent, text="Both marks must be between 0 and 20. Leave one blank if not yet graded.",
+                  foreground="#718096").grid(row=6, column=0, columnspan=2, sticky="w", pady=8)
+                  
+        refresh_table()
 
         def save_grade():
             try:
@@ -207,8 +274,17 @@ class SmartGradesApp:
             except Exception as exc:
                 messagebox.showerror("Could not save grade", str(exc))
 
-        ttk.Button(parent, text="Save grade", style="Accent.TButton",
-                   command=save_grade).grid(row=4, column=1, sticky="w", padx=5, pady=12)
+        # Create a container frame for the buttons
+        button_frame = ttk.Frame(parent)
+        button_frame.grid(row=4, column=1, sticky="w", padx=5, pady=12)
+
+        # Add the Save button to the frame
+        ttk.Button(button_frame, text="Save grade", style="Accent.TButton",
+                   command=save_grade).pack(side="left")
+                   
+        # Add the Refresh button next to it
+        ttk.Button(button_frame, text="Refresh table", 
+                   command=refresh_table).pack(side="left", padx=10)
         ttk.Label(parent, text="Both marks must be between 0 and 20. Leave one blank if not yet graded.",
                   foreground="#718096").grid(row=6, column=0, columnspan=2, sticky="w", pady=8)
 
