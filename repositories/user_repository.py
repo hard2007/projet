@@ -1,4 +1,4 @@
-from database import get_connection
+from database.database import get_connection
 
 
 def get_user_by_id(user_id):

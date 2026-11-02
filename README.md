@@ -37,14 +37,14 @@ This initializes `database/students.db` if necessary, then opens the login scree
 Run this from the project folder to create or refresh the local demonstration data:
 
 ```bash
-python create_demo_users.py
+python -m demo.create_demo_users
 ```
 
 The seed includes 60 fictional students in groups G1-G4, five teachers, six modules,
 and sample coursework and exam marks for each student. All teacher accounts use
 `TeacherDemo123!`; all student accounts use `StudentDemo123!`. The complete account
-list is in [DEMO_CREDENTIALS.txt](./DEMO_CREDENTIALS.txt). Running the seed again
-resets passwords for these demo usernames and fills in any missing sample data.
+list is in [demo/DEMO_CREDENTIALS.txt](./demo/DEMO_CREDENTIALS.txt). Running the seed
+again resets passwords for these demo usernames and fills in any missing sample data.
 
 These are public demo credentials for local testing only. Do not use this file or these
 accounts for real student information, and do not commit real student data or passwords
@@ -56,8 +56,8 @@ to GitHub.
 - `modules`: module name, coefficient, and responsible teacher (`teacher_id`).
 - `grades`: coursework and exam marks per student and module.
 
-The database is created by `database.py` using `database/schema.sql`. `students.db` is
-runtime data and is intentionally ignored by Git.
+The database is created by `database/database.py` using `database/schema.sql`.
+`students.db` is runtime data and is intentionally ignored by Git.
 
 ## Mark calculation
 
@@ -74,10 +74,12 @@ You can change the weights in `services/grade_service.py` to match your professo
 ```text
 SmartGrades/
 ├── main.py
-├── database.py
-├── create_demo_users.py
 ├── database/
+│   ├── database.py
 │   └── schema.sql
+├── demo/
+│   ├── create_demo_users.py
+│   └── DEMO_CREDENTIALS.txt
 ├── models/
 │   ├── user.py
 │   ├── module.py
@@ -90,10 +92,9 @@ SmartGrades/
 │   ├── auth_service.py
 │   ├── module_service.py
 │   └── grade_service.py
-├── ui/
-│   └── main_window.py
-└── tests/
-    └── test_schema.py
+└── ui/
+    └── main_window.py
+
 ```
 
 ## GitHub
@@ -102,9 +103,9 @@ SmartGrades/
 git init
 git add .
 git commit -m "Initial SmartGrades application"
-git branch -M main
+git branch -M master
 git remote add origin <https://github.com/hard2007/projet.git>
-git push -u origin main
+git push -u origin master
 ```
 
 ## Important scope notes

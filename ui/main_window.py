@@ -203,13 +203,11 @@ class SmartGradesApp:
         status = ttk.Label(parent, text="")
         status.grid(row=5, column=0, columnspan=2, sticky="w", pady=8)
 
-        # --- Table to display saved grades ---
         tree_frame = ttk.Frame(parent)
         tree_frame.grid(row=7, column=0, columnspan=2, sticky="nsew", pady=10)
         parent.rowconfigure(7, weight=1)
         parent.columnconfigure(1, weight=1)
 
-        # Added "module" to the columns list
         columns = ("name", "group", "module", "coursework", "exam")
         tree = ttk.Treeview(tree_frame, columns=columns, show="headings", height=8)
         
@@ -219,7 +217,6 @@ class SmartGradesApp:
         tree.heading("coursework", text="Coursework")
         tree.heading("exam", text="Exam")
         
-        # Adjusted widths to fit the new column
         tree.column("name", width=180)
         tree.column("group", width=100)
         tree.column("module", width=120)
@@ -235,7 +232,6 @@ class SmartGradesApp:
             if not module_label:
                 return
             
-            # Extract the ID and the raw module name from the dictionary
             module_id = module_by_label[module_label]["module_id"]
             module_name = module_by_label[module_label]["module_name"] 
             
@@ -247,7 +243,6 @@ class SmartGradesApp:
                     cw_str = f"{cw:.2f}" if cw is not None else "—"
                     ex_str = f"{ex:.2f}" if ex is not None else "—"
                     
-                    # Insert the module_name into the table row
                     tree.insert("", "end", values=(
                         s["full_name"], 
                         s["group_name"] or "None", 
@@ -258,9 +253,7 @@ class SmartGradesApp:
             except Exception:
                 pass
 
-        # Refresh table when a different module is selected
         module_var.trace_add("write", refresh_table)
-        # -------------------------------------
 
         def save_grade():
             try:
@@ -268,7 +261,7 @@ class SmartGradesApp:
                 student = student_by_label[student_var.get()]
                 upsert_grade(student["user_id"], module["module_id"], coursework.get(), exam.get(), self.user["user_id"])
                 status.config(text="Grade saved successfully.")
-                refresh_table() # Refreshes the UI table immediately after saving
+                refresh_table() 
             except Exception as exc:
                 messagebox.showerror("Could not save grade", str(exc))
 
@@ -289,15 +282,12 @@ class SmartGradesApp:
             except Exception as exc:
                 messagebox.showerror("Could not save grade", str(exc))
 
-        # Create a container frame for the buttons
         button_frame = ttk.Frame(parent)
         button_frame.grid(row=4, column=1, sticky="w", padx=5, pady=12)
 
-        # Add the Save button to the frame
         ttk.Button(button_frame, text="Save grade", style="Accent.TButton",
                    command=save_grade).pack(side="left")
                    
-        # Add the Refresh button next to it
         ttk.Button(button_frame, text="Refresh table", 
                    command=refresh_table).pack(side="left", padx=10)
         ttk.Label(parent, text="Both marks must be between 0 and 20. Leave one blank if not yet graded.",
@@ -350,9 +340,6 @@ class SmartGradesApp:
         ttk.Button(controls, text="Assign group", style="Accent.TButton",
                    command=assign_group).pack(side="left")
 
-    def build_modules_admin_tab(self, parent):
-        # Kept as a helper for future extension; modules are initially assigned by setup script.
-        pass
 
 
 def create_main_window():

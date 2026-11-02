@@ -1,7 +1,7 @@
 """Seed the local database with fictional users and sample academic data."""
 from pathlib import Path
 
-from database import get_connection, initialize_database
+from database.database import get_connection, initialize_database
 from services.auth_service import create_user, hash_password
 
 TEACHER_PASSWORD = "TeacherDemo123!"
@@ -89,7 +89,7 @@ def write_credentials_file(teacher_accounts, student_accounts):
     lines = [
         "LOCAL DEMO ACCOUNTS ONLY - fictional sample data",
         "Do not use these credentials or this database for real student information.",
-        "Running create_demo_users.py resets passwords for these demo usernames.",
+        "Running python -m demo.create_demo_users resets passwords for these demo usernames.",
         "",
         "TEACHERS",
         "Username | Password | Name",
@@ -163,7 +163,7 @@ def main():
     write_credentials_file(teacher_accounts, student_accounts)
     print("Demo data ready: 60 students, 5 teachers, 4 groups, 6 modules.")
     print("Sample grades are available for every student and module.")
-    print("Credentials: DEMO_CREDENTIALS.txt")
+    print("Credentials: demo/DEMO_CREDENTIALS.txt")
     print("These accounts are for local testing only; do not use real student data.")
 
 

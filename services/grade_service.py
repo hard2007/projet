@@ -1,4 +1,4 @@
-from database import get_connection
+from database.database import get_connection
 
 COURSEWORK_WEIGHT = 0.40
 EXAM_WEIGHT = 0.60

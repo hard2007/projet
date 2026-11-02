@@ -1,4 +1,4 @@
-from database import initialize_database
+from database.database import initialize_database
 from ui.main_window import create_main_window
 
 

@@ -1,7 +1,7 @@
 import hashlib
 import hmac
 import secrets
-from database import get_connection
+from database.database import get_connection
 
 
 def hash_password(password: str) -> str:

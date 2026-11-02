@@ -1,4 +1,4 @@
-from database import get_connection
+from database.database import get_connection
 
 
 def get_grades_for_student(student_id):
