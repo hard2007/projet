@@ -261,26 +261,16 @@ class SmartGradesApp:
                 student = student_by_label[student_var.get()]
                 upsert_grade(student["user_id"], module["module_id"], coursework.get(), exam.get(), self.user["user_id"])
                 status.config(text="Grade saved successfully.")
+                coursework.delete(0, tk.END)
+                exam.delete(0, tk.END)
                 refresh_table() 
             except Exception as exc:
                 messagebox.showerror("Could not save grade", str(exc))
 
-        ttk.Button(parent, text="Save grade", style="Accent.TButton",
-                   command=save_grade).grid(row=4, column=1, sticky="w", padx=5, pady=12)
-                   
         ttk.Label(parent, text="Both marks must be between 0 and 20. Leave one blank if not yet graded.",
                   foreground="#718096").grid(row=6, column=0, columnspan=2, sticky="w", pady=8)
                   
         refresh_table()
-
-        def save_grade():
-            try:
-                module = module_by_label[module_var.get()]
-                student = student_by_label[student_var.get()]
-                upsert_grade(student["user_id"], module["module_id"], coursework.get(), exam.get(), self.user["user_id"])
-                status.config(text="Grade saved successfully.")
-            except Exception as exc:
-                messagebox.showerror("Could not save grade", str(exc))
 
         button_frame = ttk.Frame(parent)
         button_frame.grid(row=4, column=1, sticky="w", padx=5, pady=12)
@@ -290,8 +280,6 @@ class SmartGradesApp:
                    
         ttk.Button(button_frame, text="Refresh table", 
                    command=refresh_table).pack(side="left", padx=10)
-        ttk.Label(parent, text="Both marks must be between 0 and 20. Leave one blank if not yet graded.",
-                  foreground="#718096").grid(row=6, column=0, columnspan=2, sticky="w", pady=8)
 
     def build_modules_tab(self, parent):
         ttk.Label(parent, text="Your assigned modules").pack(anchor="w", pady=(0, 8))
