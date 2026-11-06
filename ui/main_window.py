@@ -296,7 +296,7 @@ class SmartGradesApp:
     def build_students_tab(self, parent):
         ttk.Label(parent, text="Student roster and group assignment").pack(anchor="w", pady=(0, 8))
         columns = ("id", "name", "username", "group")
-        tree = ttk.Treeview(parent, columns=columns, show="headings", height=12)
+        tree = ttk.Treeview(parent, columns=columns, show="headings", height=8)
         for col, label, width in [("id", "ID", 60), ("name", "Full name", 220),
                                   ("username", "Username", 140), ("group", "Group", 120)]:
             tree.heading(col, text=label)
