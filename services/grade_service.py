@@ -53,9 +53,10 @@ def upsert_grade(student_id, module_id, coursework_mark, exam_mark, teacher_id):
 def get_teacher_modules(teacher_id):
     with get_connection() as conn:
         rows = conn.execute(
-            """SELECT module_id, module_name, coefficient
+            """SELECT module_id, module_name, coefficient,(SELECT AVG(coursework_mark * ? + exam_mark * ?)
+               FROM grades g WHERE g.module_id = modules.module_id) as average
                FROM modules WHERE teacher_id = ? ORDER BY module_name""",
-            (teacher_id,),
+            (COURSEWORK_WEIGHT, EXAM_WEIGHT, teacher_id,),
         ).fetchall()
     return [dict(row) for row in rows]
 

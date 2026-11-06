@@ -283,15 +283,17 @@ class SmartGradesApp:
 
     def build_modules_tab(self, parent):
         ttk.Label(parent, text="Your assigned modules").pack(anchor="w", pady=(0, 8))
-        columns = ("name", "coefficient")
+        columns = ("name", "coefficient","average")
         tree = ttk.Treeview(parent, columns=columns, show="headings", height=8)
         tree.heading("name", text="Module")
         tree.heading("coefficient", text="Coefficient")
+        tree.heading("average", text="Average of class")
         tree.column("name", width=300)
         tree.column("coefficient", width=120, anchor="center")
+        tree.column("average", width=120, anchor="center")
         tree.pack(fill="x")
         for module in get_teacher_modules(self.user["user_id"]):
-            tree.insert("", "end", values=(module["module_name"], module["coefficient"]))
+            tree.insert("", "end", values=(module["module_name"], module["coefficient"], module["average"] if "average" in module else "—"))
 
     def build_students_tab(self, parent):
         ttk.Label(parent, text="Student roster and group assignment").pack(anchor="w", pady=(0, 8))
