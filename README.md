@@ -1,75 +1,81 @@
-# SmartGrades — Python, Tkinter and SQLite
+# SmartGrades — Python, Tkinter et SQLite
 
-SmartGrades is a desktop prototype for managing university student accounts, modules,
-groups, and grades. It uses **exactly three application tables**: `users`, `modules`,
-and `grades`.
+SmartGrades est un prototype d'application de bureau permettant de gérer les comptes des étudiants universitaires, les modules, les groupes et les notes. Il utilise **exactement trois tables dans la base de données** : `users`, `modules` et `grades`.
 
-## Features included
+## Fonctionnalités incluses
 
-- Login with separate student and teacher dashboards.
-- Password hashing using PBKDF2-HMAC-SHA256.
-- Student dashboard: group, module list, coursework/exam marks, module averages,
-  and weighted semester average.
-- Teacher dashboard: view assigned modules, enter/update grades for assigned modules,
-  view student roster, and assign student groups.
-- SQLite foreign keys, mark validation, and parameterized SQL queries.
-- One teacher can be assigned to multiple modules.
-- No third-party packages are required.
+- Connexion avec des interfaces distinctes pour les étudiants et les enseignants.
+- Hachage des mots de passe avec PBKDF2-HMAC-SHA256.
+- **Dashboard étudiant** : groupe, liste des modules, notes de contrôle continu et d'examen, moyennes des modules et moyenne semestrielle pondérée.
+- **Dashboard enseignant** : consultation des modules attribués, saisie et modification des notes, consultation de la liste des étudiants et attribution des groupes.
+- Clés étrangères SQLite, validation des notes et requêtes SQL paramétrées.
+- Un enseignant peut être responsable de plusieurs modules.
+- Aucun package tiers n'est nécessaire.
 
-## Requirements
+## Prérequis
 
-- Python 3.10+ recommended.
-- Tkinter available in your Python installation.
-- SQLite is accessed via Python's built-in `sqlite3` module.
+- Python 3.10+ recommandé.
+- Tkinter disponible dans votre installation Python.
+- SQLite est utilisé via le module intégré `sqlite3` de Python.
 
-## Start the application
+## Lancer l'application
 
-Run these commands from the project folder:
+Exécutez les commandes suivantes depuis le dossier du projet :
 
 ```bash
 python main.py
 ```
 
-This initializes `database/students.db` if necessary, then opens the login screen.
+Cette commande initialise `database/students.db` si nécessaire, puis ouvre l'écran de connexion.
 
-## Create demonstration data
+## Créer les données de démonstration
 
-Run this from the project folder to create or refresh the local demonstration data:
+Exécutez cette commande depuis le dossier du projet pour créer ou actualiser les données locales de démonstration :
 
 ```bash
 python -m demo.create_demo_users
 ```
 
-The seed includes 60 fictional students in groups G1-G4, five teachers, six modules,
-and sample coursework and exam marks for each student. All teacher accounts use
-`TeacherDemo123!`; all student accounts use `StudentDemo123!`. The complete account
-list is in [demo/DEMO_CREDENTIALS.txt](./demo/DEMO_CREDENTIALS.txt). Running the seed
-again resets passwords for these demo usernames and fills in any missing sample data.
+Les données initiales comprennent :
 
-These are public demo credentials for local testing only. Do not use this file or these
-accounts for real student information, and do not commit real student data or passwords
-to GitHub.
+- 60 étudiants fictifs répartis dans les groupes G1-G4.
+- Cinq enseignants.
+- Six modules.
+- Des notes de contrôle continu et d'examen pour chaque étudiant.
 
-## Database structure
+Tous les comptes enseignants utilisent le mot de passe `TeacherDemo123!` et tous les comptes étudiants utilisent `StudentDemo123!`.
 
-- `users`: login account, role, identity, and student group.
-- `modules`: module name, coefficient, and responsible teacher (`teacher_id`).
-- `grades`: coursework and exam marks per student and module.
+La liste complète des comptes est disponible dans [demo/DEMO_CREDENTIALS.txt](./demo/DEMO_CREDENTIALS.txt).
 
-The database is created by `database/database.py` using `database/schema.sql`.
-`students.db` is runtime data and is intentionally ignored by Git.
+Une nouvelle exécution réinitialise les mots de passe de ces comptes de démonstration et complète les données manquantes.
 
-## Mark calculation
+Ces identifiants sont publics et destinés uniquement aux tests locaux. N'utilisez pas ce fichier ou ces comptes pour gérer de véritables informations étudiantes. Ne publiez jamais de données ou de mots de passe réels sur GitHub.
 
-- Coursework weight: 40%
-- Exam weight: 60%
-- Module average = coursework × 0.40 + exam × 0.60
-- Semester average = sum(module average × coefficient) / sum(coefficients for modules
-  with both marks entered)
+## Structure de la base de données
 
-You can change the weights in `services/grade_service.py` to match your professor's rules.
+- `users` : comptes de connexion, rôles, informations d'identité et groupes des étudiants.
+- `modules` : nom du module, coefficient et enseignant responsable (`teacher_id`).
+- `grades` : notes de contrôle continu et d'examen pour chaque étudiant et module.
 
-## Project structure
+La base de données est créée par `database/database.py` à partir du fichier `database/schema.sql`.
+
+Le fichier `students.db` contient les données utilisées à l'exécution et est volontairement ignoré par Git.
+
+## Calcul des notes
+
+- **Coefficient du contrôle continu** : 40 %
+- **Coefficient de l'examen** : 60 %
+- **Moyenne du module** :
+
+  `moyenne = contrôle_continu × 0.40 + examen × 0.60`
+
+- **Moyenne semestrielle** :
+
+  `moyenne_semestre = somme(moyenne_module × coefficient) / somme(coefficients des modules dont les deux notes sont saisies)`
+
+Les coefficients peuvent être modifiés dans `services/grade_service.py` afin de respecter les règles définies par votre professeur.
+
+## Structure du projet
 
 ```text
 SmartGrades/
@@ -94,10 +100,9 @@ SmartGrades/
 │   └── grade_service.py
 └── ui/
     └── main_window.py
-
 ```
 
-## GitHub
+## Publier le projet sur GitHub
 
 ```bash
 git init
@@ -108,11 +113,17 @@ git remote add origin <https://github.com/hard2007/projet.git>
 git push -u origin master
 ```
 
-## Important scope notes
+## Limitations et périmètre du projet
 
-This is a student-project prototype, not a production authentication system. The app
-currently supports teacher grade entry for assigned modules and student group assignment.
-Module creation is provided by the service layer and demo setup, but a full module-creation
-form, account-management screen, password-reset workflow, and production-grade audit trail
-are not included yet. The three-table limit means groups are stored as text on student
-accounts instead of a separate groups table.
+Il s'agit d'un prototype réalisé dans le cadre d'un projet étudiant, et non d'un système d'authentification destiné à la production.
+
+L'application permet actuellement aux enseignants de saisir les notes des modules qui leur sont attribués et d'affecter les étudiants à des groupes.
+
+La création des modules est disponible via la couche `service` et le système de démonstration. Cependant, les fonctionnalités suivantes ne sont pas encore incluses :
+
+- Formulaire complet de création de modules.
+- Interface de gestion des comptes.
+- Système de réinitialisation des mots de passe.
+- Journalisation des actions conforme aux exigences d'un environnement de production.
+
+La limitation à trois tables implique que les groupes sont stockés sous forme de texte dans les comptes des étudiants, plutôt que dans une table distincte `groups`.
